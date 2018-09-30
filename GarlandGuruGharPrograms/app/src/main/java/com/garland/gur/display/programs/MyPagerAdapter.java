@@ -14,7 +14,11 @@ import android.widget.TextView;
 
 import com.garland.gur.display.programs.R;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 
@@ -61,9 +65,7 @@ public class MyPagerAdapter extends PagerAdapter {
         container.removeView(v);
     }
 
-
-
-    public void fillCountryTable(int pagePosition) {
+    private void fillCountryTable(int pagePosition) {
 
         for (int current = 0; current < allTVShows.size(); current++) {
             if (current == 0) {
@@ -71,23 +73,29 @@ public class MyPagerAdapter extends PagerAdapter {
                     setTableRowDetails("FRIDAY LANGAR", null, current);
                 } else if (pagePosition == 1) {
                     setTableRowDetails("SUNDAY LANGAR", null, current);
-                } else if (pagePosition == 1) {
+                } else if (pagePosition == 2) {
                     setTableRowDetails("SPECIAL PROGRAMS", null, current);
                 }
-                setTableRowDetails("LANGAR DETAILS", "DATE", current);
+                setTableRowDetails("SEVA BY", "DATE", current);
             }
             boolean isValid = Boolean.FALSE;
-            if (pagePosition == 0 && allTVShows.get(current).getDy().equalsIgnoreCase("FR")) {
-                isValid = Boolean.TRUE;
-            } else if (pagePosition == 1 && allTVShows.get(current).getDy().equalsIgnoreCase("SU")) {
-                isValid = Boolean.TRUE;
-            } else if (pagePosition == 2 && (allTVShows.get(current).getDy().equalsIgnoreCase("AK") ||
-                    allTVShows.get(current).getDy().equalsIgnoreCase("SP"))) {
-                isValid = Boolean.TRUE;
-            }
-            if (isValid){
-                setTableRowDetails(allTVShows.get(current).getTitle(),
-                        allTVShows.get(current).getDy() + ", " + allTVShows.get(current).getDt(), current);
+            try {
+                if (compareTheDates(allTVShows.get(current).getFullDt())) {
+                    if (pagePosition == 0 && allTVShows.get(current).getDy().equalsIgnoreCase("FR")) {
+                        isValid = Boolean.TRUE;
+                    } else if (pagePosition == 1 && allTVShows.get(current).getDy().equalsIgnoreCase("SU")) {
+                        isValid = Boolean.TRUE;
+                    } else if (pagePosition == 2 && (allTVShows.get(current).getDy().equalsIgnoreCase("AK") ||
+                            allTVShows.get(current).getDy().equalsIgnoreCase("SP"))) {
+                        isValid = Boolean.TRUE;
+                    }
+                    if (isValid) {
+                        setTableRowDetails(allTVShows.get(current).getTitle(),
+                                allTVShows.get(current).getDy() + ", " + allTVShows.get(current).getDt(), current);
+                    }
+                }
+            }catch (Exception e){
+
             }
         }
     }
@@ -97,16 +105,19 @@ public class MyPagerAdapter extends PagerAdapter {
 
         TextView t1 = new TextView(context);
         TextView t2 = new TextView(context);
+
         t1.setText(title);
-        if(dt != null) {
-            t2.setText(dt);
-        }
         t1.setGravity(Gravity.CENTER);
         t1.setTextSize(40);
         t1.setTextColor(Color.parseColor("#FFFFFF"));
+        if(dt==null) {
+            t1.setBackgroundResource(R.color.colorPrimary);
+            t1.setPaddingRelative(8, 8, 8, 8);
+        }
         row.addView(t1);
 
         if(dt != null) {
+            t2.setText(dt);
             t2.setGravity(Gravity.CENTER);
             t2.setTextSize(40);
             t2.setTextColor(Color.parseColor("#FFFFFF"));
@@ -114,7 +125,7 @@ public class MyPagerAdapter extends PagerAdapter {
         }else{
             TableRow.LayoutParams the_param= (TableRow.LayoutParams)row.getLayoutParams();
             if(null != the_param) {
-                t1.setTextColor(Color.parseColor("#B2c"));
+                //t1.setTextColor(Color.parseColor("#B2c"));
                 the_param.span = 2;
                 row.setLayoutParams(the_param);
             }
@@ -123,9 +134,40 @@ public class MyPagerAdapter extends PagerAdapter {
         if(null != country_table) {
             TableLayout.LayoutParams tableRowParams = new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             tableRowParams.setMargins(3,3,3,3);
+            tableRowParams.weight=0;
             country_table.addView(row, tableRowParams);
 
         }
     }
+
+    public boolean compareTheDates(String date) throws ParseException {
+        boolean op = Boolean.FALSE;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date date1 = sdf.parse(date);
+
+
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        cal1.setTime(date1);
+
+        System.out.println("date passed : " + date1 +" Today date ="+cal2.getTime());
+
+        if (cal1.after(cal2)) {
+            System.out.println("Date1 is after Date2");
+            op = Boolean.TRUE;
+        }
+
+        if (cal1.before(cal2)) {
+            System.out.println("Date1 is before Date2");
+        }
+
+        if (cal1.equals(cal2)) {
+            System.out.println("Date1 is equal Date2");
+            op = Boolean.TRUE;
+        }
+       return op;
+    }
+
+
 
 }

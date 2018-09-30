@@ -7,6 +7,7 @@ public class TVShow {
             public  String dy;
             public  String dt;
             public  String title;
+            public  String fullDt;
 
     public TVShow() {
     }
@@ -29,4 +30,11 @@ public class TVShow {
                 return title;
             }
 
+            public String getFullDt() {
+                return fullDt;
+            }
+
+            public void setFullDt(String fullDt) {
+                this.fullDt = fullDt;
+            }
     }

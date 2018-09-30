@@ -238,12 +238,15 @@ public class WelcomeActivity extends AppCompatActivity {
                 while (iterator.hasNext()) {
 
                     DataSnapshot next = (DataSnapshot) iterator.next();
-                    Log.i("WELECOME ", "Key = " + next.getKey());
+                    //Log.i("WELECOME ", "Key = " + next.getKey());
                     Iterator<DataSnapshot> iterator1=  next.getChildren().iterator();
                     while (iterator1.hasNext()) {
                         DataSnapshot next1 = (DataSnapshot) iterator1.next();
-                        Log.i("WELECOME ", "Value = " + next1.child("title").getValue());
+                       // Log.i("WELECOME ", "Value = " + next1.child("title").getValue());
                         TVShow note = next1.getValue(TVShow.class);
+                        String fulldt = note.getDt()+"/"+next.getKey().substring(4,6)+"/"+next.getKey().substring(0,4);
+                        Log.i("WELECOME ", "Full Date = " + fulldt);
+                        note.setFullDt(fulldt);
                         movies.add(note);
 
                     }
